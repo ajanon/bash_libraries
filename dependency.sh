@@ -5,10 +5,10 @@ is_installed() {
 }
 check_dependency() {
     if ! is_installed "$1"; then
-        if [[ -z ${__LOG__+x} ]]; then # checks if log library is loaded
-            printf "%s is required but it is not installed. Aborting.\n" "$1"
-        else
+        if declare -f -F log_critical >/dev/null; then
             log_critical "%s is required but it is not installed. Aborting." "$1"
+        else
+            printf "%s is required but it is not installed. Aborting.\n" "$1"
         fi
         exit 1
     fi
