@@ -49,7 +49,8 @@ init_logging() {
     # date options
     # Controls the timestamp formatting.
     # Default: utc with iso-8601 formatting up to nanosecond precision.
-    declare -gr DATE_OPTIONS="--utc --iso-8601=ns"
+    declare -gra __LOG_DATE_OPTIONS_FILE__=("--utc" "--rfc-3339=ns")
+    declare -gra __LOG_DATE_OPTIONS_TTY__=("+%F %T")
 
     ####################
     # Verbosity constants
@@ -122,16 +123,18 @@ log_wrapper() {
     local fmt="$4"
     shift 4
     local -r script_name="$(basename ${BASH_SOURCE[${#BASH_SOURCE[@]} - 1]})"
-    local -r timestamp="$(date $DATE_OPTIONS)"
+    local -r timestamp="$(date +'%s.%N')"
+    local -r timestamp_file="$(date -d@$timestamp "${__LOG_DATE_OPTIONS_FILE__[@]}")"
+    local -r timestamp_tty="$(date -d@$timestamp "${__LOG_DATE_OPTIONS_TTY__[@]}")"
     if [[ -n "$level_name" ]]; then
-        [[ -w "${logfile:-}" ]] && printf "[%s] %-10s: ${fmt}\n" "$timestamp" "$level_name" "$@" | sed 's/\x1b\[[0-9;]*[mGKH]//g' >> "$logfile"
+        [[ -w "${logfile:-}" ]] && printf "[%s] %-10s: ${fmt}\n" "$timestamp_file" "$level_name" "$@" | sed 's/\x1b\[[0-9;]*[mGKH]//g' >> "$logfile"
         if [[ $verbosity -ge $level ]]; then
-            printf "[%s] {%s} ${color}%-10s${C_RESET}: ${fmt}\n" "$timestamp" "$script_name" "$level_name" "$@" >&2
+            printf "[%s] {%s} ${color}%-10s${C_RESET}: ${fmt}\n" "$timestamp_tty" "$script_name" "$level_name" "$@" >&2
         fi
     else
-        [[ -w "${logfile:-}" ]] && printf "[%s] ${fmt}\n" "$timestamp" "$@" | sed 's/\x1b\[[0-9;]*[mGKH]//g' >> "$logfile"
+        [[ -w "${logfile:-}" ]] && printf "[%s] ${fmt}\n" "$timestamp_file" "$@" | sed 's/\x1b\[[0-9;]*[mGKH]//g' >> "$logfile"
         if [[ $verbosity -ge $level ]]; then
-            printf "[%s] {%s} ${fmt}\n" "$timestamp" "$script_name" "$@" >&2
+            printf "[%s] {%s} ${fmt}\n" "$timestamp_tty" "$script_name" "$@" >&2
         fi
     fi
 }
