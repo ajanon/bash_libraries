@@ -25,6 +25,8 @@ temp_dir_cleanup() {
             else
                 printf "Could not delete directory %s. Aborting.\n" "$dirpath"
             fi
+        else
+            log_debug "Deleted temp dir %s" "$dirpath"
         fi
     done
 }
