@@ -28,8 +28,6 @@ temp_dir_cleanup() {
         else
             if declare -f -F log_critical >/dev/null; then
                 log_debug "Deleted temp dir %s" "$dirpath"
-            else
-                printf "Deleted temp dir %s\n" "$dirpath"
             fi
         fi
     done
