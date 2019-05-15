@@ -13,6 +13,8 @@ temp_dir() {
     if [[ -z ${__TEMP_DIR_LIST__+x} ]]; then
         declare -ag __TEMP_DIR_LIST__=("$dirpath")
         trap temp_dir_cleanup EXIT
+    else
+        __TEMP_DIR_LIST__+="$dirpath"
     fi
     echo "${dirpath}"
 }
