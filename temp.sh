@@ -12,13 +12,25 @@ temp_dir() {
     fi
     declare -f -F log_debug >/dev/null \
         && log_debug "Created temp dir %s" "$dirpath"
+    echo "${dirpath}"
+}
+
+track_temp_dir() {
+    dirpath="$1"
+    if [[ ! "$dirpath" || ! -d "$dirpath" ]]; then
+        if declare -f -F log_error >/dev/null; then
+            log_error "%s is not a dir" "$dirpath"
+        else
+            printf "%s is not a dir\n" "$dirpath"
+        fi
+        return 1
+    fi
     if [[ -z ${__TEMP_DIR_LIST__+x} ]]; then
         declare -ag __TEMP_DIR_LIST__=("$dirpath")
         trap temp_dir_cleanup EXIT
     else
         __TEMP_DIR_LIST__+=("$dirpath")
     fi
-    echo "${dirpath}"
 }
 
 temp_dir_cleanup() {
