@@ -3,12 +3,12 @@
 temp_dir() {
     local -r dirpath="$(mktemp -d)"
     if [[ ! "$dirpath" || ! -d "$dirpath" ]]; then
-        if declare -f -F log_critical >/dev/null; then
-            log_critical "Could not create temporary directory. Aborting."
+        if declare -f -F log_error >/dev/null; then
+            log_error "Could not create temporary directory."
         else
-            printf "Could not create temporary directory. Aborting.\n"
+            printf "Could not create temporary directory.\n"
         fi
-        exit 1
+        return 1
     fi
     if [[ -z ${__TEMP_DIR_LIST__+x} ]]; then
         declare -ag __TEMP_DIR_LIST__=("$dirpath")
