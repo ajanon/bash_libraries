@@ -16,7 +16,7 @@ temp_dir() {
         declare -ag __TEMP_DIR_LIST__=("$dirpath")
         trap temp_dir_cleanup EXIT
     else
-        __TEMP_DIR_LIST__+="$dirpath"
+        __TEMP_DIR_LIST__+=("$dirpath")
     fi
     echo "${dirpath}"
 }
