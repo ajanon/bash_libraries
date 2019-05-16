@@ -10,6 +10,8 @@ temp_dir() {
         fi
         return 1
     fi
+    declare -f -F log_debug >/dev/null \
+        && log_debug "Created temp dir %s" "$dirpath"
     if [[ -z ${__TEMP_DIR_LIST__+x} ]]; then
         declare -ag __TEMP_DIR_LIST__=("$dirpath")
         trap temp_dir_cleanup EXIT
