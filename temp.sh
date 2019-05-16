@@ -28,7 +28,7 @@ temp_dir_cleanup() {
                 printf "Could not delete directory %s. Aborting.\n" "$dirpath"
             fi
         else
-            if declare -f -F log_critical >/dev/null; then
+            if declare -f -F log_debug >/dev/null; then
                 log_debug "Deleted temp dir %s" "$dirpath"
             fi
         fi
